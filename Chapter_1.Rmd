@@ -1,0 +1,21 @@
+---
+title: "Chapter_1"
+output: html_document
+date: '2022-07-24'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Summary
+
+We moeten heroverwegen hoe we met statistiek omgaan. In plaats van blackbox 
+modellen voor het testen van null hypothesen kunnen we beter gebruik maken van 
+meerdere modellen van natuurlijke fenomenen, hiervoor kunnen we verschillende 
+middelen gebruiken:
+
+1. Bayesiaanse inferentie
+2. Modellen vergelijken in plaats van hypothesetoetsen
+3. Multilevel modellen (hierarchische modellen)
+4. Grafische causale modellen

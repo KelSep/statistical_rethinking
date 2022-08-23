@@ -1,0 +1,21 @@
+---
+title: "Chapter_3"
+output: html_document
+date: '2022-07-24'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Sampling the imaginary
+
+Bayesiaanse statistiek werkt met kansen. Maar werken met kansen is niet echt
+intuitief, zie voorbeeld kans op zeldzame ziekte bij positieve test. We kunnen 
+ook gebruik maken van frequenties omdat dit meer intutief aanvoelt om mee te 
+werken. In dit hoofdstuk gaan we dan ook voornamelijk kansdistributies gebruiken
+om hiermee samples van frequenties te genereren. We gaan vervolgens samples 
+genereren van de posterior met als resultaat frequenties van parameters. Deze 
+frequenties kunnen we dan gebruiken om een onzekerheid over een parameter weer
+te geven. De posterior geeft bij gevolg de verwachte frequentie van de 
+verschillende parameters.

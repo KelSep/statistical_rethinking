@@ -1,0 +1,381 @@
+---
+title: "Chapter_2"
+output: html_document
+date: '2022-07-24'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Small and big worlds. 
+
+We gaan in dit hoofdstuk bayesiaanse modellen creeren van data die optimaal zijn
+in een kleine wereld, met name een wereld beschreven met duidelijke assumpties. 
+Wanneer de assumpties kloppen met de werkelijkheid zal het model ook goed 
+presteren in de grote wereld (de realiteit als complex systeem). Het is dan ook
+belangrijk om dat het vermogen van deze modellen geevalueerd worden zowel op 
+statistische wijze als op op een informele wijze zoals peer review.
+
+## 2.1 forking data
+
+Modelleren op basis van het tellen van mogelijke paden die overeenkomen met de 
+hypothese.
+_zie boek_
+
+## 2.2 Building a model
+
+In dit hoofdstuk gaan we een model bouwen op basis van percentages in plaats van
+ruwe tellingen. Een model bouwen op basis van percentages is de conventionele 
+vorm van een Bayesiaans model.
+We willen weten hoeveel procent van de wereldbol bedekt is met water. Hiervoor
+gaan we gaan een wereldbol in de lucht gooien. Wanneer je de bol vangt kijk je
+of de rechter wijsvinger op water of op land wijst. Dit doe je negen keer.
+
+Resultaat:
+  W L W W W L W L W
+  
+Om een model te bouwen zijn drie componenten nodig:
+  1. Data verhaal: Motiveer het model door te verklaren hoe de data ontstaat.
+  2. Update model: Verfijn het model op basis van data.
+  3. Evalueer: Bepaal of het model geschikt is of dat het herzien moet worden.
+
+### 2.2.1 The data story 
+
+Een Bayesiaans data verhaal wil zeggen dat je een hypothese ontwikkelt over hoe
+de data ontstaat. Dit verhaal kan beschrijvend zijn, op basis van variabelen
+die geassocieerd zijn met de uitkomst, of het kan causaal zijn waarbij 
+variabelen de oorzaak of gevolg zijn van de uitkomst. Dit doen we om duidelijk
+te maken wat de assumpties zijn van het model en de redeneringen over hoe het is
+ontstaan.
+ 
+Je kan het verhaal motiveren met behulp van verklaringen over hoe elk stuk data
+is ontstaan. e.g. 
+  1) De ware proportie van water is _p_
+  2) Een worp zoals als uitkomt _p_ kans hebben dat het water is en _1-p_ kans 
+  dat het land is
+  3) Elke worp is onafhankelijk van de andere.
+
+Vervolgens wordt het verhaal omgebouwd tot een formeel kansmodel. Dit model 
+bestaat uit verschillende componenten die makkelijk individueel te bepalen zijn.
+
+Wat moet een verhaal bevatten:
+  1. Proces over hoe de data ontstaat
+  2. Welke variabelen betrokken worden
+  3. Hoe deze variabelen met invloed uitoefenen op de uitkomst of elkaar
+  4. De parameters bepalen van het model
+  5. Het kansmodel
+ 
+### 2.2.2 Bayesian updating
+
+Wat het doel is van het updaten is om bewijs (data) te gebruiken om de juiste 
+parameters (in dit geval de kans _p_) te bepalen. Ons model begint met set van 
+plausibele parameters (prior) en we updaten dit model op basis van bewijzen om 
+nieuwe parameters te verkrijgen (posterior). Dit proces heet "Bayesian 
+updating". 
+
+Wanneer we de eerste worp uitvoeren dan kunnen we ons model updaten en weten we 
+al dat p niet gelijk kan zijn aan 0 omdat de uitkomst water geeft.  
+
+#### Hoe een model leert
+
+_Nog op terugkomen_
+
+```{r}
+uitkomst <- factor(c("W", "L", "W", "W", "W", "L", "W", "L", "W"))
+worp <- 1:9
+p <- seq(0, 1, by = 0.05)
+y <- dbinom(p, 9, 0.5)
+
+plot(p, y)
+``` 
+
+Hier kan je zien dat elke stuk bewijs de parameters beetje bij beetje aanpast. 
+Wat je hier kan zien is dat na elk stuk bewijs we een nieuwe posterior krijgen 
+die aangepast is op basis van het bewijs. Deze posterior wordt dan gebruikt als
+nieuwe prior voor de volgende update. Hiermee is het leerproces een iteratief 
+proces. 
+
+Vaak wordt er gezegd dat je minstens 30 stalen nodig hebt voordat je een 
+gausiaanse distributie kunt gebruiken. Bij een bayesiaans model is dit niet het
+geval omdat de onzekerheid zichzelf vertaalt in de uitkomst. Wat wel belangrijk
+is is dat de prior goed geinitieerd wordt. Hierbij is het belangrijk dat je de 
+prior kennis geen uniforme kans geeft maar een ruwe schatting uitvoert.
+
+### 2.2.3 Evaluate
+
+Het model leert hiermee optimaal rekening houdend dat het model een goede 
+representatie van de werkelijke wereld. Er is geen manier die met de beschikbare
+informatie en die begint met dezelfde voorkennis beter een model kan aanleren.
+
+Waar wel rekening mee gehouden moet worden is dat de berekeningen kunnen 
+mislopen waardoor de resultaten altijd moeten worden nagekeken. Hierbovenop is 
+er ook geen garantie dat het model een goede representatie is van de werkelijke
+wereld. *Dus bij een inferentie zal altijd rekening gehouden moeten worden met de 
+context van het model dat je gebruikt om deze te bekomen.* Naarmate dat er meer 
+data wordt toegevoegd zal het model ook zekerder worden van de werkelijke 
+proporties. Hierdoor zullen de curves van de parameters ook steeds nauwer worden 
+en zich centreren rond de werkelijke waarden.
+
+Het is natuurlijk belangrijk dat je je model kritisch bekijkt en bepaald of het
+model een goede representatie is van de werkelijkheid. Ook is het belangrijk om
+componenten te bepalen die irrelevant kunnen zijn omdat deze onrechtstreeks wel
+een invloed kunnen geven op je inferenties. 
+
+Wat je altijd in het achterhoofd moet houden is dat elk model verkeerd is. Maar
+je kan er nog altijd zeer accurate inferenties uit halen. Daarom hoor je de 
+prestatie te beoordelen ten opzichte van het doel van het model. Rekening 
+houdend met de assumpties die hiermee gepaard gaan. 
+
+## 2.3 Components of a model
+
+De normale manier hoe dat een probabilistische model wordt opgebouwd is op basis
+van een distributies en middelen die een weergave geven over het datageneratie
+proces. 
+
+1) De variabelen:
+  Een variabele is niets anders dan een symbool dat meerdere waarden kan 
+  aannemen. Meestal is dit een waarde die we willen afleiden maar dit kan ook 
+  waarden zijn die zijn waargenomen. Wanneer een variabele niet geobserveerd is 
+  dan noemen we dit een parameter. 
+  
+2) De definities:
+    * Geobserveerde variabelen:
+    De variabelen kunnen met elkaar in verband gebracht worden met behulp van 
+    definities. Het doel is om een model te maken die een representatie is van het 
+    data genererend proces **gegeven de assumpties**. Voor elke ongeobserveerde 
+    variabele moeten we onze voorkennis hierover ook includeren in de definities.
+    Een distributie die we toewijzen aan onze geobserveerde variabele noemen we de
+    likelihood. Dit is de kans dat de data voorkomt met een bepaalde parameter. 
+    
+    * Niet geobserveerde variabelen:
+    De distributie die we toewijzen aan geobserveerde variabelen hebben vaak ook
+    hun eigen variabelen e.g. normaal verdeling (mu, sigma). Aangezien deze niet 
+    geobserveerd zijn noemen we ze parameters. Veel vragen die we ons stellen 
+    over processen kunnen beantwoord worden met deze parameters (zie gemiddelde).
+    Deze vragen kunnen vervolgens ook extra parameters worden in de distributie
+    functie van een geobserveerde variabelen (e.g. covariaten). 
+    
+    Zoals we een distributie definieren voor geobserveerde variabelen, kunnen we 
+    er ook een definieren voor niet geobserveerde variabelen genaamd de prior. 
+    Deze prior is een kansverdeling over elke mogelijke waarde voor de parameter. 
+    Een prior is een voorbeeld van een assumptie maar deze kan aangepast worden
+    op basis van nieuw bewijs. De vlakke prior is een veelgebruikte maar in de
+    meeste gevallen een slechte keuze. Omdat de prior een assumptie is moet deze
+    ook gevalueerd en indien nodig aangepast worden. 
+    
+3) Het model:
+  Met de variabelen en de definities bepaald in de vorige secties kunnen we nu
+  het model samenvatten. Deze samenvatting toont beknopt hoe de verschillende 
+  variabelen met elkaar zijn verbonden en welke variabelen welke distributie 
+  volgen.
+  
+## 2.4 Making the model go
+
+Met alle variabelen en definities kunnen we de prior distributie updaten met als
+resultaat de posterior distributie. Deze nieuwe distributie bevat de relatieve
+plausibiliteit van de verschillende mogelijke parameters conditioneel op de data.
+
+Zie p. 37 voor een herhaling van Bayes' theorem. 
+
+### 2.4.2 Motors
+
+Een bayesiaans model is een machine die bestaat uit definities en variabelen die 
+we op voorhand hebben bepaald. Om deze machine te laten draaien hebben we een 
+motor nodig die een posterior distributie kan maken. Hoe we deze verkrijgen is 
+door het conditioneren van de prior met de beschikbare data. Om de flexibiliteit
+te behouden om te kiezen welke prior we combineren met welke likelihoods 
+gebruiken we numerische methoden die het mogelijk maken om benaderingen uit te 
+voeren. We maken gebruik hierbij gebruik van drie mogelijke technieken:
+
+* Grid approximation
+* Quadratic approximation
+* Markov chain monte carlo
+
+Een ander voorbeeld is variational inference of The forward backward algorithm.
+
+Hoe je het model fit is net zo belangrijk als de variabelen die je implementeert
+en de definities die je opstelt! 
+
+### 2.4.3 Grid approximation
+
+Ondanks dat de meeste parameters continue zijn met een oneindig aantal mogelijke
+waarden kunnen we een goede benadering bekomen door een eindig aantal waarden. 
+Dit proces is relatief simpel met name je kan voor elke parameterwaarde de 
+posterior bepalen door de prior te vermenigvuldigen met de likelihood voor die 
+parameterwaarde. Wanneer je dit doet voor een reeks aan parameterwaardes kan je 
+een goede posterior distributie bekomen. Deze methode wordt weinig gebruikt omdat
+die slecht schaalt wanneer het aantal parameters stijgt.
+
+Hoe voeren we dit uit:
+1) Bepaal de 'grid', de waarden voor de parameters. 
+2) Bereken de prior kans voor elke waarde van de parameter.
+3) Bereken de likelihood kans voor elke parameter waarde.
+4) Bereken de ongestandaardiseerde posterior bij elke parameter waarde.
+5) Standaardiseer de posterior door elke waarde te delen door de totale som.
+
+```{r}
+# define grid
+p_grid <- seq(from=0, to=1, length.out = 20)
+
+# define prior
+prior <- rep(1, 20)
+
+# likelihood at each value of grid
+# dbinom(aantal successen, aantal trekkingen, prob = kans op succes)
+likelihood <- dbinom(6, size = 9, prob = p_grid)
+
+# compute product
+unstd.posterior <- likelihood * prior
+
+# standardize posterior 
+posterior <- unstd.posterior / sum(unstd.posterior)
+``` 
+
+Nu met minder parameters (kleinere grid)
+
+```{r}
+# define grid
+p_grid_5 <- seq(from=0, to=1, length.out = 5)
+
+# define prior
+prior_5 <- rep(1, 5)
+
+# likelihood at each value of grid
+likelihood_5 <- dbinom(6, size = 9, prob = p_grid_5)
+
+# compute product
+unstd.posterior_5 <- likelihood_5 * prior_5
+
+# standardize posterior 
+posterior_5 <- unstd.posterior_5 / sum(unstd.posterior_5)
+```
+
+```{r}
+par(mfcol = c(1,2))
+
+# plot posterior size 20 grid
+plot(p_grid, posterior)
+
+# plot posterior size 5 grid
+plot(p_grid_5, posterior_5)
+``` 
+
+Nu met een andere prior:
+
+```{r}
+# define grid
+p_grid <- seq(from=0, to=1, length.out = 20)
+
+# define prior
+prior_x <- ifelse(p_grid < 0.5, 0, 1) 
+
+# likelihood at each value of grid
+likelihood_x <- dbinom(6, size = 9, prob = p_grid)
+
+# compute product
+unstd.posterior_x <- likelihood_x * prior_x
+
+# standardize posterior 
+posterior_x <- unstd.posterior_x / sum(unstd.posterior_x)
+
+# plot posterior size 20 grid
+par(mfcol = c(1, 1))
+plot(p_grid, posterior_x, type = "b")
+
+```
+
+Voor modellen met een klein aantal parameters is het makkelijk om grid.approx te
+gebruiken, maar wanneer je 10 parameters krijgt kan dit al makkelijk tot 
+meerdere miljarden combinaties oplopen. Hierbij gaat grid.approximation geen 
+optie meer zijn. Een alternatief dat we kunnen gebruiken is quadratic 
+approximation. Deze heeft als assumptie dat onder algemene condities de regio
+in de buurt van de piek van de posterior Gaussian of normaal verdeeld is. 
+Hierdoor kunnen we de posterior distributie schatten op basis van een 
+Gaussiaanse verdeling. In sommige gevallen is deze methode zelfs exact in plaats
+van een schatting. 
+
+Deze methode is computationeel vrij goedkoop in vergelijking met grid.approx en 
+MCMC. Het bevat 2 stappen:
+1. Zoek de posterior modus. Dit wordt uitgevoerd met een optimalisatie algoritme
+waarbij de meest gebruikte kijken naar de gradient.
+2. Wanneer de piek is gevonden dan wordt de kromming van de piek geschat en deze
+kromming is voldoende om de volledige posterior te bepalen. 
+
+Om quadratic approx uit te voeren gebruiken we een functie van de rethinking 
+package: quap
+
+```{r}
+if (!("rethinking" %in% installed.packages())){
+  install.packages(c("mvtnorm","loo","coda"), repos="https://cloud.r-project.org/",dependencies=TRUE)
+  options(repos=c(getOption('repos'), rethinking='http://xcelab.net/R'))
+  install.packages('rethinking',type='source')
+}
+troep <- c("igraph", "terra", "mvtnorm", "minqa","nloptr", "classInt","units",
+           "threejs","raster", "shinystan","bridgesampling","nleqslv", "lme4",
+           "spData","sf","deldir")
+
+library(rethinking)
+globe.qa <- quap(
+  alist(
+    W ~ dbinom( W+L , p),
+    p ~ dunif( 0, 1)
+  ),
+  data = list(W = 6, L = 3)
+)
+
+precis( globe.qa )
+str(globe.qa)
+``` 
+
+De formule hierboven geeft weer de kans op de data en de prior. De mean geeft 
+de posterior gemiddelde aan en de kromming is de stddev. Vervolgens geeft het 
+ook het 89% percentiel interval weer. Als we er dus vanuit gaan dat de posterior
+Gaussiaans verdeeld is dan is het maximum 0.67 en de standaard deviatie 0.16.
+
+We kunnen dit ook analytisch oplossen met behulp van de beta distributie, maar
+hiermee verlies je wel de flexibiliteit om te kiezen hoe je parameter verdeeld 
+is. Een voorbeeld met behulp van de analytische oplossing:
+
+```{r}
+W <- 6
+L <- 3
+x <- 18
+# analytisch
+curve(dbeta (x , W+1, L+1), from = 0, to = 1)
+# quadratisch
+curve(dnorm(x, 0.67, 0.16), lty=2, add=TRUE)
+
+``` 
+
+### 2.4.5 Markov chain Monte Carlo
+
+Er zijn ook veel modellen waarbij bovenstaande methodes allemaal niet geschikt
+zijn zoals multilevel modellen. De meest populaire techniek om dan wel te 
+gebruiken is MCMC wat een familie is van "conditioning engines". Deze techniek
+werkt contraintuitief omdat ze enkel samples genereert van de posterior in 
+plaats van een directe schatting uit te voeren. Uiteindelijk krijg je een 
+collectie van parameter waarden waarbij de frequenties hiervan de posterior
+probabiliteit kunnen vormen. We werken dan ook meestal direct met deze samples 
+in plaats van nog eerst voorbewerkingen hierop uit te voeren. 
+
+Een voorbeeld van een MCMC:
+```{r}
+n_samples <- 1000
+p <- rep(NA, n_samples)
+p[1] <- 0.5
+W <- 6
+L <- 3
+for (i in 2:n_samples){
+  p_new <- rnorm(1, p[i-1], 0.1)
+  if ( p_new < 0 ) p_new <- abs( p_new )
+  if ( p_new > 1 ) p_new <- 2 - p_new
+  q0 <- dbinom( W, W+L, p[i-1])
+  q1 <- dbinom( W, W+L, p_new)
+  p[i] <- ifelse(runif(1) < q1/q0, p_new, p[i-1])
+}
+
+dens(p)
+hist(p, breaks = seq(0,1,0.05))
+curve(dbeta(x, W+1, L+1), lty=2, add=TRUE)
+``` 
